@@ -21,15 +21,14 @@ A small number of images (20) is used per video. This should be compared with th
 
 # Known issues and possible improvement.
 
-The model's accuracy is currently quite low, comparable to that of the baseline classifier, which predicts the majority class  'ApplyEyeMakeup' for all videos.
+The model's accuracy is currently relatively low, as the model suffers from imbalanced classes and favors the majority class  'ApplyEyeMakeup'.
 
 The model can be improved using these ideas:
 <ul>
-    <li>increase the size of data (image resolution, number of frames passed to the model);</li>
-    <li> subsample frames during extraction to allow the extracted frames to cover a longer period of time;</li>
-    <li>increase the training length;</li>
     <li>subsample the majority class in the training set,</li> 
     <li>query the data on-the-fly rather than storing it in RAM (see below).</li>
+    <li>preprocess the videos using Optical Flow.
+    <li>check for overfitting, and whether the number of frames can be reduced, for 15 frames in 3 sec may be excessive.</li>
 </ul>
 
 # Feedback and additional questions.
