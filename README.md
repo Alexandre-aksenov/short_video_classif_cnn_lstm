@@ -3,8 +3,6 @@
 Although regression is the most common task in time series,
 classification may also become useful in some applications. For instance, for flagging potentially inappropriate content in social media to prevent such videos from being posted online.
 
-# III. Classification de vidéos
-
 Videos are considered as time series of frames.
 
 Therefore, it is appropriate to use  **Convolutional Neural Networks** (fore processing each frame) together with **Recurrent ones** to us the dependency between consecutive frames.
