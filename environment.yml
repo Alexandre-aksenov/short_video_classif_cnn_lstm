@@ -2,16 +2,16 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - ipykernel=6.29.5
-  - ipython=8.22.2
-  - keras=2.13.1
-  - matplotlib=3.9.1
-  - matplotlib-base=3.9.1
-  - matplotlib-inline=0.1.7
-  - numpy=1.26.4
-  - opencv=4.9.0
-  - python=3.11.9
-  - scikit-learn=1.5.1
-  - tensorflow=2.13.1
-  - tensorflow-base=2.13.1
-  - tensorflow-estimator=2.13.1
+  - imbalanced-learn=0.14.1
+  - ipykernel=7.2.0
+  - ipython=9.10.0
+  - keras=3.12.0
+  - matplotlib=3.10.8
+  - matplotlib-base=3.10.8
+  - matplotlib-inline=0.2.1
+  - opencv=4.12.0
+  - python=3.13.12
+  - scikit-learn=1.8.0
+  - tensorflow=2.20.0
+  - tensorflow-base=2.20.0
+
