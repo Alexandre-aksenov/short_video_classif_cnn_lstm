@@ -24,7 +24,8 @@ def onehot_from01(y_res: np.ndarray) -> np.ndarray:
     
     PyLance raises a false positive: binarizer.transform "can" return an spmatrix.
     """
-    return binarizer.transform(y_res)[:, :2]
+    # return binarizer.transform(y_res)[:, :2]
+    return np.array(binarizer.transform(y_res))[:, :2]
 
 
 if __name__ == "__main__":
@@ -34,6 +35,19 @@ if __name__ == "__main__":
     print(y_res)
     
     y_res_onehot = onehot_from01(y_res)
-    print(y_res_onehot.shape)  #  
+    print(y_res_onehot.shape)  # (10, 2)
     print(f"Vector converted to one-hot encoding:")
     print(y_res_onehot)
+    """
+    [[1 0]
+    [0 1]
+    [1 0]
+    [0 1]
+    [0 1]
+    [1 0]
+    [1 0]
+    [0 1]
+    [1 0]
+    [0 1]]
+    
+    """
