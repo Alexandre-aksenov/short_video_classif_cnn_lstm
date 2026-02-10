@@ -15,16 +15,15 @@ We use hybrid architectures called CNN-LSTM. The corresponding layer type is cal
 
 The dataset of this example is is a subset of [UCF-101](https://www.crcv.ucf.edu/data/UCF101.php) by the Research Center in Computer Vision of the University of Central Florida. Our dataset is reduced the categories 'Apply Eye Makeup' and 'Apply Lipstick'.
 
-A small number of images (20) is used per video. This should be compared with the frame rate:  25 images per second. Our simplified version allows reducing the data size and time of computation.
+A small number of images (15) is used per video. This should be compared with the frame rate:  25 images per second. Our simplified version allows reducing the data size and time of computation.
 
 # Known issues and possible improvement.
 
-The model's accuracy is currently relatively low, as the model suffers from imbalanced classes and favors the majority class  'ApplyEyeMakeup'.
+The minority class is harder to predict, but precision/recall are quite balanced.
 
 The model can be improved using these ideas:
 <ul>
-    <li>subsample the majority class in the training set,</li> 
-    <li>query the data on-the-fly rather than storing it in RAM (see below).</li>
+    <li>increase the length of training (for this model is still learning at the epoch number 10).
     <li>preprocess the videos using Optical Flow.
     <li>check for overfitting, and whether the number of frames can be reduced, for 15 frames in 3 sec may be excessive.</li>
 </ul>
