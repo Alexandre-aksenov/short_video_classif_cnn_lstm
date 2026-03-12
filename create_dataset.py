@@ -5,7 +5,7 @@ import cv2
 import os
 
 
-def frames_extraction(video_path: str, img_width:int, img_height:int, frames_to_extract) -> list:
+def frames_extraction(video_path: str, img_width:int, img_height:int, frames_to_extract: list[int]) -> list:
     """ Get frames from a video.
     
     Args:
@@ -13,7 +13,7 @@ def frames_extraction(video_path: str, img_width:int, img_height:int, frames_to_
     
     Input global variables:
         img_width, img_height (int)
-        frames_to_extract (range or list of int)
+        frames_to_extract (list of int)
     
     Raises:
         EOFError: video is shorter than the required number of frames
@@ -51,7 +51,7 @@ def frames_extraction(video_path: str, img_width:int, img_height:int, frames_to_
     return frames_list
 
 
-def create_dataset(input_dir: str, classes, img_width:int, img_height:int, frames_to_extract, seq_len: int) -> tuple[np.ndarray, np.ndarray]:
+def create_dataset(input_dir: str, classes: tuple[str, ...], img_width:int, img_height:int, frames_to_extract: list[int], seq_len: int) -> tuple[np.ndarray, np.ndarray]:
     """
     Write an array with all images of each video
     and the corresponding labels.
@@ -60,6 +60,7 @@ def create_dataset(input_dir: str, classes, img_width:int, img_height:int, frame
         input_dir (str): path to folder with the videos.
         classes: iterable[str]
         img_width, img_height: int
+        frames_to_extract (range or list of int)
         seq_len: int
     
     Returns formatted dataset:
