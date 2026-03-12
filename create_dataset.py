@@ -1,9 +1,11 @@
+# Module for importing data into the model.
+
 import numpy as np
 import cv2
 import os
 
 
-def frames_extraction(video_path: str, img_width, img_height, frames_to_extract) -> list:
+def frames_extraction(video_path: str, img_width:int, img_height:int, frames_to_extract) -> list:
     """ Get frames from a video.
     
     Args:
@@ -14,7 +16,8 @@ def frames_extraction(video_path: str, img_width, img_height, frames_to_extract)
         frames_to_extract (range or list of int)
     
     Raises:
-        EOFError: video is shorter than 'seq_len' frames
+        EOFError: video is shorter than the required number of frames
+            equal frames_to_extract[-1] + 1
 
     Returns:
         list[np.ndarray ?]: video converted to 4d tensor
@@ -48,18 +51,16 @@ def frames_extraction(video_path: str, img_width, img_height, frames_to_extract)
     return frames_list
 
 
-def create_dataset(input_dir: str, classes, img_width, img_height, frames_to_extract, seq_len: int) -> tuple[np.ndarray, np.ndarray]:
+def create_dataset(input_dir: str, classes, img_width:int, img_height:int, frames_to_extract, seq_len: int) -> tuple[np.ndarray, np.ndarray]:
     """
     Write an array with all images of each video
     and the corresponding labels.
 
     Input:
         input_dir (str): path to folder with the videos.
+        classes: iterable[str]
+        img_width, img_height: int
         seq_len: int
-
-    Input global variable: classes: iterable[str]
-    Input global variables for 'frames_extraction':
-        img_width, img_height, seq_len (int)
     
     Returns formatted dataset:
         X (np.ndarray : (N_samples, N_timesteps, N_width, N_height, N_channel));
