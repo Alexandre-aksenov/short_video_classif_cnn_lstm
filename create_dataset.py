@@ -4,8 +4,10 @@ import numpy as np
 import cv2
 import os
 
+from collections.abc import Sequence
 
-def frames_extraction(video_path: str, img_width:int, img_height:int, frames_to_extract: list[int]) -> list:
+
+def frames_extraction(video_path: str, img_width:int, img_height:int, frames_to_extract: Sequence[int]) -> list:
     """ Get frames from a video.
     
     Args:
@@ -13,14 +15,14 @@ def frames_extraction(video_path: str, img_width:int, img_height:int, frames_to_
     
     Input global variables:
         img_width, img_height (int)
-        frames_to_extract (list of int)
+        frames_to_extract (list or range of int)
     
     Raises:
         EOFError: video is shorter than the required number of frames
             equal frames_to_extract[-1] + 1
 
     Returns:
-        list[np.ndarray ?]: video converted to 4d tensor
+        list[np.ndarray]: video converted to list of 3d tensors (N_width, N_height, N_channel).
         
     Returns frames with periodic sampling.
     """
@@ -51,14 +53,14 @@ def frames_extraction(video_path: str, img_width:int, img_height:int, frames_to_
     return frames_list
 
 
-def create_dataset(input_dir: str, classes: tuple[str, ...], img_width:int, img_height:int, frames_to_extract: list[int], seq_len: int) -> tuple[np.ndarray, np.ndarray]:
+def create_dataset(input_dir: str, classes: Sequence[str], img_width:int, img_height:int, frames_to_extract: Sequence[int], seq_len: int) -> tuple[np.ndarray, np.ndarray]:
     """
     Write an array with all images of each video
     and the corresponding labels.
 
     Input:
         input_dir (str): path to folder with the videos.
-        classes: iterable[str]
+        classes: Sequence[str]
         img_width, img_height: int
         frames_to_extract (range or list of int)
         seq_len: int
