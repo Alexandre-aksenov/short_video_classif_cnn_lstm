@@ -7,7 +7,33 @@ import os
 from collections.abc import Sequence
 
 
-def frames_extraction(video_path: str, img_width:int, img_height:int, frames_to_extract: Sequence[int]) -> list:
+def subsample_frames(seq_len: int, period: int, residue=0) -> list[int]:
+    """ the list of frames to be extracted for given parameters
+
+    Args:
+        seq_len (int): the number of frames that will enter the dataset
+        period (int): periodicity
+        residue (int, default=0):
+            the residue of frame passed to model modulo the period,
+            unlikely to be important here.
+
+    Returns:
+        list[int]: subsampled list of indices
+    """
+    residue = residue % period 
+    
+    frames_to_consider = seq_len * period
+    res = list(range(residue, frames_to_consider, period))
+
+    # check length of result and return
+    assert len(res) == seq_len
+    return res
+
+
+def frames_extraction(video_path: str,
+                        img_width:int,
+                        img_height:int,
+                        frames_to_extract: Sequence[int]) -> list:
     """ Get frames from a video.
     
     Args:
@@ -48,12 +74,19 @@ def frames_extraction(video_path: str, img_width:int, img_height:int, frames_to_
         elif not success:
             # Print error messsage and exit the loop
             print(f"Failed to read the frame {n_frame} from the file {video_path}")
-            raise EOFError
+            # the video is too short,
+            # the condition "if len(frames) == seq_len" will remove it from dataset
 
     return frames_list
 
 
-def create_dataset(input_dir: str, classes: Sequence[str], img_width:int, img_height:int, frames_to_extract: Sequence[int], seq_len: int) -> tuple[np.ndarray, np.ndarray]:
+def create_dataset(input_dir: str,
+                    classes: Sequence[str],
+                    img_width:int,
+                    img_height:int,
+                    # frames_to_extract: Sequence[int], ->
+                    period: int, 
+                    seq_len: int) -> tuple[np.ndarray, np.ndarray]:
     """
     Write an array with all images of each video
     and the corresponding labels.
@@ -71,6 +104,8 @@ def create_dataset(input_dir: str, classes: Sequence[str], img_width:int, img_he
     
     This function can be sped up by pre-allocating numpy arrays.
     """
+    frames_to_extract = subsample_frames(seq_len, period)
+    
     X = []
     Y = []
 
