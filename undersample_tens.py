@@ -6,18 +6,21 @@ from imblearn.under_sampling import RandomUnderSampler
 
 def to_matrix(X_tens: np.ndarray) -> np.ndarray:
     """
-    Convert a tensor to a 2D matrix, by flattening all dimensions except the first one.
+    Convert a tensor to a 2D matrix,
+    by flattening all dimensions except the first one.
     """
     in_shape = X_tens.shape
     return X_tens.reshape(in_shape[0], -1)
 
 
-def undersample_tensor(X_tens: np.ndarray, y_mat: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def undersample_tensor(X_tens: np.ndarray,
+                       y_mat: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """
     Undersample the majority class in a dataset.
     
     Args:
-        X_tens (np.ndarray): tensor of shape (N_samples, N_timesteps, N_width, N_height, N_channel)
+        X_tens (4D np.ndarray): tensor of shape
+            (N_samples, N_timesteps, N_width, N_height, N_channel)
         y_mat (np.ndarray): matrix of shape (N_samples, N_classes)
     
     Returns:
@@ -28,11 +31,16 @@ def undersample_tensor(X_tens: np.ndarray, y_mat: np.ndarray) -> tuple[np.ndarra
 
     # Undersample the majority class
     rus = RandomUnderSampler(random_state=42)
-    X_res, y_res = rus.fit_resample(X_mat, y_mat) # Pylance: tuple size mismatch
+    X_res, y_res = rus.fit_resample(X_mat, y_mat)
+    # Pylance: tuple size mismatch
 
     # Convert back to tensor
     in_shape = X_tens.shape
-    out_shape = (X_res.shape[0], in_shape[1], in_shape[2], in_shape[3], in_shape[4])
+    out_shape = (X_res.shape[0],
+                 in_shape[1],
+                 in_shape[2],
+                 in_shape[3],
+                 in_shape[4])
     X_res_tens = X_res.reshape(out_shape)
 
     return X_res_tens, y_res

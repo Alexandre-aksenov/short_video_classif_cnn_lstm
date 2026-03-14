@@ -22,7 +22,8 @@ def onehot_from01(y_res: np.ndarray) -> np.ndarray:
     Returns:
         np.ndarray: one-hot encoded target matrix of shape (N_samples, 2)
     """
-    return np.array(binarizer.transform(y_res))[:, :2] # conversion needed to avoid false error message 
+    return np.array(binarizer.transform(y_res))[:, :2]
+    # conversion needed to avoid false positive error
 
 
 if __name__ == "__main__":
