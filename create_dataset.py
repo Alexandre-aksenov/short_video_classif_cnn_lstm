@@ -1,7 +1,8 @@
 # Module for importing data into the model.
 
 import numpy as np
-import cv2
+import cv2 # PyCharm recommends installing 'opencv-python', available via pip:
+# https://pypi.org/project/opencv-python/
 import os
 
 from collections.abc import Sequence
