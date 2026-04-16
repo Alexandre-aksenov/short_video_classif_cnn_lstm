@@ -3,3 +3,7 @@ __pycache__/
 
 data/*
 models/*
+
+all_weights/
+test_results/
+weight_file
