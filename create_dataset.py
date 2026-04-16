@@ -1,11 +1,14 @@
 # Module for importing data into the model.
 
 import numpy as np
-import cv2 # PyCharm recommends installing 'opencv-python', available via pip:
-# https://pypi.org/project/opencv-python/
+import cv2
 import os
 
 from collections.abc import Sequence
+
+# Video preprocessing
+from retinaface_inference import RetinaFaceDetector, cfg_mnet, cfg_re50
+from video_to_tensor import video_to_tensor
 
 
 def subsample_frames(seq_len: int, period: int, residue=0) -> list[int]:
@@ -67,7 +70,7 @@ def frames_extraction(video_path: str,
         if success and (n_frame in frames_to_extract):
             
             # Using OpenCV, reshape the image.
-            # TOCHECK the signature of cv2.resize
+            # TOCHECK the type
             img_reshaped: np.ndarray = cv2.resize(image, dsize=(img_width, img_height))
             
             # Append the frame to the list
@@ -107,7 +110,15 @@ def create_dataset(input_dir: str,
     This function can be sped up by pre-allocating numpy arrays.
     """
     frames_to_extract = subsample_frames(seq_len, period)
-    
+
+    # Initialize detector from standalone library
+    cfg = cfg_re50
+    args = {}
+    args.trained_model = 'weight_file'
+    args.cpu = False
+    detector = RetinaFaceDetector(cfg, args.trained_model, args.cpu)
+
+
     X = []
     Y = []
 
@@ -118,12 +129,19 @@ def create_dataset(input_dir: str,
         # It's assumed the following loop that all files are videos.
         
         for f in files_list:
+            """
             frames = frames_extraction(os.path.join(
                 os.path.join(input_dir, c), f),
                 img_width,
                 img_height,
                 frames_to_extract)
+            """
             # frames: list of frames.
+
+            # video_to_tensor(args.input, detector), TOCHECK
+            frames = video_to_tensor(os.path.join(
+                os.path.join(input_dir, c), f),
+                detector)
             
             if len(frames) == seq_len:
                 X.append(frames)
