@@ -113,11 +113,9 @@ def create_dataset(input_dir: str,
 
     # Initialize detector from standalone library
     cfg = cfg_re50
-    args = {}
-    args.trained_model = 'weight_file'
-    args.cpu = False
-    detector = RetinaFaceDetector(cfg, args.trained_model, args.cpu)
-
+    trained_model = 'weight_file'
+    cpu = False
+    detector = RetinaFaceDetector(cfg, trained_model, cpu)
 
     X = []
     Y = []
@@ -138,10 +136,12 @@ def create_dataset(input_dir: str,
             """
             # frames: list of frames.
 
-            # video_to_tensor(args.input, detector), TOCHECK
             frames = video_to_tensor(os.path.join(
                 os.path.join(input_dir, c), f),
-                detector)
+                detector,
+                target_size=(img_height, img_width),
+                frames_to_extract=frames_to_extract)
+            # 4D numpy array.
             
             if len(frames) == seq_len:
                 X.append(frames)
@@ -156,6 +156,7 @@ def create_dataset(input_dir: str,
                 # the one-hot encoding of the index of file.
 
     # convert X, Y to tensor and matrix respectively.
-    X = np.asarray(X)
+    # X = np.asarray(X) #->
+    tens_x = np.stack(X, axis=0)
     Y = np.asarray(Y)
-    return X, Y
+    return tens_x, Y
