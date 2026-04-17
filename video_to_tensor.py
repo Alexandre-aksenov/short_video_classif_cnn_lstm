@@ -2,11 +2,14 @@ import cv2
 import argparse
 import torch
 import numpy as np
-import os
+# import os
 from typing import Sequence, Optional
 from retinaface_inference import RetinaFaceDetector, cfg_mnet, cfg_re50
 
-def video_to_tensor(video_path: str, detector: RetinaFaceDetector, vis_thres: float = 0.5, target_size: tuple = (50, 50), frames_to_extract: Optional[Sequence[int]] = None) -> np.ndarray:
+
+def video_to_tensor(video_path: str, detector: RetinaFaceDetector,
+                    vis_thres: float = 0.5, target_size: tuple = (50, 50),
+                    frames_to_extract: Optional[Sequence[int]] = None) -> np.ndarray:
     """
     Processes a video and returns a 4D numpy tensor of shape (time, height, width, 3).
     
@@ -18,7 +21,8 @@ def video_to_tensor(video_path: str, detector: RetinaFaceDetector, vis_thres: fl
         frames_to_extract: Optional list of frame indices to extract.
         
     Returns:
-        A numpy array of shape (N, target_height, target_width, 3) where N is the number of frames.
+        A numpy array of shape (N, target_height, target_width, 3)
+        where N is the number of frames.
     """
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
@@ -70,6 +74,7 @@ def video_to_tensor(video_path: str, detector: RetinaFaceDetector, vis_thres: fl
         return tensor
     else:
         return np.array([])
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Retinaface Video to Tensor Preprocessing')
