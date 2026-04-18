@@ -60,6 +60,11 @@ class RetinaFaceDetector:
         # scale shape: [4]
         scale: torch.Tensor = torch.Tensor([img.shape[1], img.shape[0], img.shape[1], img.shape[0]])
         assert scale.shape == (4,), f"Unexpected scale shape: {scale.shape}"
+
+        # ImageNet mean values (BGR) used for input normalization
+        # These constants (104.0, 117.0, 123.0) represent the average intensity of B, G, and R channels 
+        # across the ImageNet dataset, a standard practice for models based on VGG or ResNet backbones.
+        # Subtracting the mean helps in centering the data, which stabilizes and accelerates training.
         img -= (104, 117, 123)
         img = img.transpose(2, 0, 1)  # shape: 3 x H x W
         assert img.shape == (3, im_height, im_width), f"Unexpected transposed img shape: {img.shape}"
@@ -72,9 +77,10 @@ class RetinaFaceDetector:
         loc: torch.Tensor
         conf: torch.Tensor
         landms_t: torch.Tensor
-        # loc shape: 1 x N x 4, conf shape: 1 x N x 2, landms_t shape: 1 x N x 10
-        # where N is the number of prior boxes
-        loc, conf, landms_t = self.net(img_torch)  # forward pass
+        with torch.no_grad():
+            # loc shape: 1 x N x 4, conf shape: 1 x N x 2, landms_t shape: 1 x N x 10
+            # where N is the number of prior boxes
+            loc, conf, landms_t = self.net(img_torch)  # forward pass
         num_priors = loc.shape[1]
         assert loc.shape == (1, num_priors, 4), f"Unexpected loc shape: {loc.shape}"
         assert conf.shape == (1, num_priors, 2), f"Unexpected conf shape: {conf.shape}"
@@ -87,18 +93,20 @@ class RetinaFaceDetector:
         priors: torch.Tensor = priorbox.forward()
         assert priors.shape == (num_priors, 4), f"Unexpected priors shape: {priors.shape}"
         priors = priors.to(self.device)
-        prior_data: torch.Tensor = priors.data
+        # .detach() returns a new tensor that shares the same storage as the original but is detached from the autograd graph.
+        # This is useful for inference as it avoids tracking the history of operations, which is not needed here.
+        prior_data: torch.Tensor = priors.detach()
         # boxes_t shape: N x 4
-        boxes_t: torch.Tensor = decode(loc.data.squeeze(0), prior_data, self.cfg['variance'])
+        boxes_t: torch.Tensor = decode(loc.detach().squeeze(0), prior_data, self.cfg['variance'])
         assert boxes_t.shape == (num_priors, 4), f"Unexpected boxes_t shape: {boxes_t.shape}"
         # boxes shape: N x 4
         boxes: np.ndarray = (boxes_t * scale).cpu().numpy()
         assert boxes.shape == (num_priors, 4), f"Unexpected boxes shape: {boxes.shape}"
         # scores shape: N
-        scores: np.ndarray = conf.squeeze(0).data.cpu().numpy()[:, 1]
+        scores: np.ndarray = conf.squeeze(0).detach().cpu().numpy()[:, 1]
         assert scores.shape == (num_priors,), f"Unexpected scores shape: {scores.shape}"
         # landms_t_dec shape: N x 10
-        landms_t_dec: torch.Tensor = decode_landm(landms_t.data.squeeze(0), prior_data, self.cfg['variance'])
+        landms_t_dec: torch.Tensor = decode_landm(landms_t.detach().squeeze(0), prior_data, self.cfg['variance'])
         assert landms_t_dec.shape == (num_priors, 10), f"Unexpected landms_t_dec shape: {landms_t_dec.shape}"
         # scale1 shape: [10]
         scale1: torch.Tensor = torch.Tensor([img_torch.shape[3], img_torch.shape[2], img_torch.shape[3], img_torch.shape[2],
