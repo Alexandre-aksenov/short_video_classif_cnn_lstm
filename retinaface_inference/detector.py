@@ -192,16 +192,22 @@ class RetinaFaceDetector:
         # Crop the image
         cropped: np.ndarray = img_raw[ny1:ny2, nx1:nx2].copy()
         
+        # Resize to fixed size (e.g., 50x50)
+        resized: np.ndarray = cv2.resize(cropped, target_size)
+
         # Draw 4 circles at landmarks (excluding the nose at b[9:11])
-        # Note: landmark coordinates must be shifted to match the cropped image
+        # Scaling factor for landmarks (since they were calculated for the crop)
+        crop_h, crop_w = cropped.shape[:2]
+        scale_x = target_size[0] / crop_w
+        scale_y = target_size[1] / crop_h
+
         landmark_indices = [(5, 6), (7, 8), (11, 12), (13, 14)]
         for lx_idx, ly_idx in landmark_indices:
             lx: int = int(b[lx_idx])
             ly: int = int(b[ly_idx])
-            # Shift landmarks by the crop top-left corner
-            slx, sly = lx - nx1, ly - ny1
-            cv2.circle(cropped, (slx, sly), 1, (255, 255, 255), 2)
+            # Shift landmarks by the crop top-left corner and then scale
+            slx = int((lx - nx1) * scale_x)
+            sly = int((ly - ny1) * scale_y)
+            cv2.circle(resized, (slx, sly), 1, (255, 255, 255), 2)
             
-        # Resize to fixed size (e.g., 50x50)
-        resized: np.ndarray = cv2.resize(cropped, target_size)
         return resized
