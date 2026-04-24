@@ -19,11 +19,13 @@ def check_keys(model, pretrained_state_dict):
     assert len(used_pretrained_keys) > 0, 'load NONE from pretrained checkpoint'
     return True
 
+
 def remove_prefix(state_dict, prefix):
     ''' Old style model is stored with all names of parameters sharing common prefix 'module.' '''
     print('remove prefix \'{}\''.format(prefix))
     f = lambda x: x.split(prefix, 1)[-1] if x.startswith(prefix) else x
     return {f(key): value for key, value in state_dict.items()}
+
 
 def load_model(model, pretrained_path, load_to_cpu):
     print('Loading pretrained model from {}'.format(pretrained_path))
@@ -40,6 +42,7 @@ def load_model(model, pretrained_path, load_to_cpu):
     model.load_state_dict(pretrained_dict, strict=False)
     return model
 
+
 class RetinaFaceDetector:
     def __init__(self, cfg, trained_model, cpu=False):
         self.cfg = cfg
@@ -50,7 +53,8 @@ class RetinaFaceDetector:
         self.net = self.net.to(self.device)
         self.timer = {'forward_pass': Timer(), 'misc': Timer()}
 
-    def detect(self, img_raw: np.ndarray, nms_threshold: float = 0.4) -> np.ndarray:
+    # def detect(self, img_raw: np.ndarray, nms_threshold: float = 0.4) -> np.ndarray:
+    def detect(self, img_raw: np.ndarray) -> np.ndarray:
         # img_raw shape: H x W x 3
         img: np.ndarray = np.float32(img_raw)  # shape: H x W x 3
         assert img.ndim == 3 and img.shape[2] == 3, f"Unexpected img shape: {img.shape}"
@@ -146,13 +150,6 @@ class RetinaFaceDetector:
             # text = "{:.4f}".format(b[4])  # rm text on image -> comment out
             b = list(map(int, b))
             cv2.rectangle(img_raw, (b[0], b[1]), (b[2], b[3]), (0, 0, 255), 2)
-            # cx = b[0]
-            # cy = b[1] + 12  # rm text on image -> comment out +12
-
-            # Init version: write the confidence level on top of rectangle
-            # rm text on image -> comment out
-            # cv2.putText(img_raw, text, (cx, cy),
-            #            cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255))
 
             # landms
             cv2.circle(img_raw, (b[5], b[6]), 1, (0, 0, 255), 4)
@@ -208,6 +205,7 @@ class RetinaFaceDetector:
             # Shift landmarks by the crop top-left corner and then scale
             slx = int((lx - nx1) * scale_x)
             sly = int((ly - ny1) * scale_y)
-            cv2.circle(resized, (slx, sly), 1, (255, 255, 255), 2)
-            
+            # draw a cross on the place of the landmark
+            cv2.circle(resized, (slx, sly), 0, (255, 255, 255), 2)
+
         return resized

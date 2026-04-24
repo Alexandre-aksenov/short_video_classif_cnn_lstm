@@ -29,11 +29,11 @@ and to keep only inference using the model ResNet50. The new version is located 
 
 # Known issues and possible improvement.
 
-The minority class is harder to predic.
+The minority class is harder to predict.
 
 The model can be improved using these ideas:
 <ul>
-    <li>draw the circles at landmarks after resizing to avoid passing information about original resolution to the model.
+    <li>Increase the new size.
     <li>use a second pretrained model for video segmentation to detect the brush.
     <li>increase the length of training (for this model is still learning at the epoch number 10).
     <li>preprocess the videos using Optical Flow.

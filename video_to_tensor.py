@@ -2,13 +2,13 @@ import cv2
 import argparse
 import torch
 import numpy as np
-# import os
 from typing import Sequence, Optional
 from retinaface_inference import RetinaFaceDetector, cfg_mnet, cfg_re50
 
 
 def video_to_tensor(video_path: str, detector: RetinaFaceDetector,
-                    vis_thres: float = 0.5, target_size: tuple = (50, 50),
+                    vis_thres: float = 0.5,
+                    target_size: tuple[int, int] = (50, 50),
                     frames_to_extract: Optional[Sequence[int]] = None) -> np.ndarray:
     """
     Processes a video and returns a 4D numpy tensor of shape (time, height, width, 3).
